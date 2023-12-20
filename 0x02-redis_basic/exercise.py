@@ -36,16 +36,11 @@ class Cache ():
         self.counts = {}
 
     @staticmethod
-    def call_history_and_count_calls(method: Callable) -> Callable:
-        counts = {}
-
+    def call_history(method: Callable) -> Callable:
         @wraps(method)
         def wrapper(self, *args, **kwargs):
-            key = method.__qualname__
-            counts[key] = counts.get(key, 0) + 1
-
-            inputs_key = f"{key}:inputs"
-            outputs_key = f"{key}:outputs"
+            inputs_key = f"{method.__qualname__}:inputs"
+            outputs_key = f"{method.__qualname__}:outputs"
 
             # Append input arguments to the inputs list
             self._redis.rpush(inputs_key, str(args))
@@ -67,7 +62,7 @@ class Cache ():
     with the data.
     input data || random key || store them - i guess keys are the ids.
     """
-    @call_history_and_count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         as described above
