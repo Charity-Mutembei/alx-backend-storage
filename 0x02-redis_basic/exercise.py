@@ -40,7 +40,7 @@ class Cache ():
     with the data.
     input data || random key || store them - i guess keys are the ids.
     """
-    def store(self, data) -> str:
+    def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         as described above
         """
