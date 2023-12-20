@@ -33,7 +33,6 @@ class Cache ():
         """
         self._redis = redis.Redis()
         self._redis.flushdb()
-        self.counts = {}
 
     @staticmethod
     def call_history(method: Callable) -> Callable:
@@ -42,13 +41,10 @@ class Cache ():
             inputs_key = f"{method.__qualname__}:inputs"
             outputs_key = f"{method.__qualname__}:outputs"
 
-            # Append input arguments to the inputs list
             self._redis.rpush(inputs_key, str(args))
 
-            # Execute the wrapped function to retrieve the output
             result = method(self, *args, **kwargs)
 
-            # Store the output in the outputs list
             self._redis.rpush(outputs_key, str(result))
 
             return result
