@@ -17,7 +17,8 @@ Remember that data can be a str, bytes, int or float.
 
 import uuid
 import redis
-from typing import Union
+from typing import Union, Callable
+from functools import wraps
 
 
 class Cache ():
@@ -33,6 +34,22 @@ class Cache ():
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @staticmethod
+    def count_calls(method: Callable) -> Callable:
+        """
+        test
+        """
+        counts = {}
+
+        @wraps(method)
+        def wrapper(self, *args, **kwargs):
+            key = method.__qualname__
+            counts[key] = counts.get(key, 0) + 1
+            result = method(self, *args, **kwargs)
+            return result
+
+        return wrapper
+
     """
     the same class is to have a store() which does have an argument
     data that gives a string as an output. However, the output is to
@@ -40,6 +57,7 @@ class Cache ():
     with the data.
     input data || random key || store them - i guess keys are the ids.
     """
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         as described above
