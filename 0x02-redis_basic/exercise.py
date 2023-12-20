@@ -33,6 +33,7 @@ class Cache ():
         """
         self._redis = redis.Redis()
         self._redis.flushdb()
+        self.counts = {}
 
     @staticmethod
     def count_calls(method: Callable) -> Callable:
@@ -44,7 +45,7 @@ class Cache ():
         @wraps(method)
         def wrapper(self, *args, **kwargs):
             key = method.__qualname__
-            counts[key] = counts.get(key, 0) + 1
+            self.counts[key] = self.counts.get(key, 0) + 1
             result = method(self, *args, **kwargs)
             return result
 
@@ -75,10 +76,10 @@ class Cache ():
         to cnvert the data || i think represented by the key, to its
         original state/format.
         """
-        key_value = self._redis.get(key)
-        if key_value is not None and fn is not None:
-            return fn(key_value)
-        return key_value
+
+        if key in self.counts:
+            return self.counts[key]
+        return None
 
     def get_str(self, key: str) -> Union[str, None]:
         """
