@@ -48,3 +48,41 @@ class Cache ():
         self._redis.set(random_key, data)
 
         return random_key
+
+    def get(self, key: str, fn: callable =
+            None) -> Union[str, bytes, int, float, None]:
+        """
+        This method gets a key in a string format and an callable argument
+        which are to be arguments. The callable argument fn is to be used
+        to cnvert the data || i think represented by the key, to its
+        original state/format.
+        """
+        key_value = self._redis.get(key)
+        if key_value is not None and fn is not None:
+            return fn(key_value)
+        return key_value
+
+    def get_str(self, key: str) -> Union[str, None]:
+        """
+        The get_str method is a convenience method for retrieving
+        a string value associated with a key.
+        It uses the get method with a conversion function that
+        decodes bytes using UTF-8 (d.decode("utf-8"))
+        if the value is not None.
+        If the value is None, it returns None.
+        """
+        return self.get(key,
+                        fn=lambda d: d.decode("utf-8")
+                        if d else None)
+
+    def get_int(self, key: str) -> Union[int, None]:
+        """
+        The get_int method is a convenience method for retrieving
+        an integer value associated with a key.
+        It uses the get method with a conversion function
+        that converts bytes to an integer (int(d))
+        if the value is not None. If the value is None,
+        it returns None.
+        """
+        return self.get(key, fn=lambda d: int(d)
+                        if d else None)
