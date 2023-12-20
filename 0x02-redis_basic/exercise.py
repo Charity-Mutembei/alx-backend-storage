@@ -36,17 +36,26 @@ class Cache ():
         self.counts = {}
 
     @staticmethod
-    def count_calls(method: Callable) -> Callable:
-        """
-        test
-        """
+    def call_history_and_count_calls(method: Callable) -> Callable:
         counts = {}
 
         @wraps(method)
         def wrapper(self, *args, **kwargs):
             key = method.__qualname__
-            self.counts[key] = self.counts.get(key, 0) + 1
+            counts[key] = counts.get(key, 0) + 1
+
+            inputs_key = f"{key}:inputs"
+            outputs_key = f"{key}:outputs"
+
+            # Append input arguments to the inputs list
+            self._redis.rpush(inputs_key, str(args))
+
+            # Execute the wrapped function to retrieve the output
             result = method(self, *args, **kwargs)
+
+            # Store the output in the outputs list
+            self._redis.rpush(outputs_key, str(result))
+
             return result
 
         return wrapper
@@ -58,7 +67,7 @@ class Cache ():
     with the data.
     input data || random key || store them - i guess keys are the ids.
     """
-    @count_calls
+    @call_history_and_count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         as described above
@@ -76,10 +85,10 @@ class Cache ():
         to cnvert the data || i think represented by the key, to its
         original state/format.
         """
-
-        if key in self.counts:
-            return self.counts[key]
-        return None
+        key_value = self._redis.get(key)
+        if key_value is not None and fn is not None:
+            return fn(key_value)
+        return key_value
 
     def get_str(self, key: str) -> Union[str, None]:
         """
