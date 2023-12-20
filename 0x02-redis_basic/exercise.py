@@ -34,23 +34,6 @@ class Cache ():
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    @staticmethod
-    def call_history(method: Callable) -> Callable:
-        @wraps(method)
-        def wrapper(self, *args, **kwargs):
-            inputs_key = f"{method.__qualname__}:inputs"
-            outputs_key = f"{method.__qualname__}:outputs"
-
-            self._redis.rpush(inputs_key, str(args))
-
-            result = method(self, *args, **kwargs)
-
-            self._redis.rpush(outputs_key, str(result))
-
-            return result
-
-        return wrapper
-
     """
     the same class is to have a store() which does have an argument
     data that gives a string as an output. However, the output is to
@@ -58,7 +41,6 @@ class Cache ():
     with the data.
     input data || random key || store them - i guess keys are the ids.
     """
-    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         as described above
