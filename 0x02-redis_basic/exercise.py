@@ -15,10 +15,10 @@ Type-annotate store correctly.
 Remember that data can be a str, bytes, int or float.
 """
 
+import functools
+from typing import Union, Callable
 import uuid
 import redis
-from typing import Union, Callable
-import functools
 
 
 @staticmethod
