@@ -133,7 +133,7 @@ class Cache ():
         """
         return self.get(key, fn=lambda d: int(d)
                         if d else None)
-    
+
     def replay(self, method: Callable):
         """
         a replay function to display
