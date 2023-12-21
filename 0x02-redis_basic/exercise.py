@@ -17,8 +17,8 @@ Remember that data can be a str, bytes, int or float.
 
 import functools
 from typing import Union, Callable
-import uuid
 import redis
+import uuid
 
 
 @staticmethod
