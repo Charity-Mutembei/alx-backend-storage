@@ -56,7 +56,7 @@ def call_history(method: Callable) -> Callable:
 
 
 @staticmethod
-def count_calls(method):
+def count_calls(method: Callable):
     """
     Familiarize yourself with the INCR command and
     its python equivalent.
