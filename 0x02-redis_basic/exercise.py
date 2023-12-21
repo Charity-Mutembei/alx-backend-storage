@@ -133,3 +133,21 @@ class Cache ():
         """
         return self.get(key, fn=lambda d: int(d)
                         if d else None)
+    
+    def replay(self, method: Callable):
+        """
+        a replay function to display
+        the history of calls of a particular function.
+        """
+        key = method.__qualname__
+        inputs_key = f"{key}:inputs"
+        outputs_key = f"{key}:outputs"
+
+        inputs = self._redis.lrange(inputs_key, 0, -1)
+        outputs = self._redis.lrange(outputs_key, 0, -1)
+
+        print(f"{key} was called {len(inputs)} times:")
+        for args, result in zip(inputs, outputs):
+            args_str = args.decode('utf-8')
+            result_str = result.decode('utf-8')
+            print(f"{key}(*{args_str}) -> {result_str}")
