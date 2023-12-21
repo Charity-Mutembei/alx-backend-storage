@@ -17,7 +17,7 @@ Bonus: implement this use case with decorators.
 
 import requests
 import time
-from functools import wraps
+import functools
 
 """
 Dictionary to store cached results and access counts
@@ -60,7 +60,7 @@ def cache_decorator(func):
     """
     test
     """
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(url):
         """
         test
