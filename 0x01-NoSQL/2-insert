@@ -1,7 +1,3 @@
 // 2-insert
 
-// Set the database name as a shell variable
-DB_NAME=$2
-
-// Run the mongo command with the variable
-$DB_NAME --eval 'db.school.insertOne({ name: "Holberton school" })'
+db.school.insert({name: "Holberton school"})
