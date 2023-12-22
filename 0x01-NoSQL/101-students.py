@@ -9,6 +9,7 @@ def top_students(mongo_collection):
     """
     Use aggregate to calculate the average score for each student
     """
+
     pipeline = [
         {
             '$group': {
