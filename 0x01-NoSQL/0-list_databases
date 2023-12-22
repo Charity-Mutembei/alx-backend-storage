@@ -1,15 +1,3 @@
 // 0-list_databases
 
-// Connect to the MongoDB server
-var conn = new Mongo();
-
-// Get the list of databases
-var databases = conn.getDBs();
-
-// Print the list of databases
-databases.databases.forEach(function(database) {
-    print(database.name + "\t" + (database.sizeOnDisk / (1024 * 1024)).toFixed(3) + "GB");
-});
-
-// Exit the mongo shell
-quit();
+show dbs
